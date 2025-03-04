@@ -1,37 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
-    {% load static %}
-
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-
-<body>
-    <header>
-        <h1>Your Cart</h1>
-        <nav>
-            <a href="{% url 'home' %}">Haome</a> |
-            <a href="{% url 'logout' %}">Logout</a>
-        </nav>
-    </header>
-    <main>
-        <h2>Items in Your Cart</h2>
-        {% if cart_items %}
-
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Your Cart</h2>
+    {% if cart_items %}
         <ul>
             {% for item in cart_items %}
-            <li>{{ item.quantity }} x {{ item.product.name }} - ${{ item.product.price }} each</li>
+                <li>{{ item.quantity }} x {{ item.product.name }} - ${{ item.product.price }} each</li>
             {% endfor %}
         </ul>
         <h3>Total Price: ${{ total_price }}</h3>
-        {% else %}
+        <a href="{% url 'checkout' %}" class="btn">Order Now</a>
+    {% else %}
         <p>Your cart is empty.</p>
-        {% endif %}
-    </main>
-</body>
-
-</html>
+    {% endif %}
+{% endblock %}

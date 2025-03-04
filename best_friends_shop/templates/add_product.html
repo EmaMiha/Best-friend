@@ -1,27 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <header>
-        <h1>Add a New Product</h1>
-        <nav>
-            <a href="{% url 'home' %}">Back to Home</a>
-            <a href="{% url 'logout' %}">Logout</a>
-        </nav>
-    </header>
+{% extends 'base.html' %}
 
-    <main>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Add Product</button>
-        </form>
-    </main>
-</body>
-</html>
+{% block content %}
+    <h2>Add a New Product</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
+{% endblock %}
