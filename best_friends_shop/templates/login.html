@@ -1,12 +1,36 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Username" class="form-control mb-2">
-        <input type="password" name="password" placeholder="Password" class="form-control mb-2">
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow p-4" style="width: 350px;">
+        <h2 class="text-center mb-3">Login</h2>
+
+        {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+                <p class="mb-0">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter your username" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter your password" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        <p class="text-center mt-3">
+            Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Register here</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

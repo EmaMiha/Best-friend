@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Categories & Subcategories</h2>
+    <ul>
+        {% for category in categories %}
+            <li><strong>{{ category.name }}</strong>
+                <ul>
+                    {% for subcategory in category.subcategories.all %}
+                        <li>{{ subcategory.name }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
