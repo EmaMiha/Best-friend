@@ -1,12 +1,8 @@
 from django.contrib.auth.models import User
-from django.db import models
-from django.urls import reverse
 from django import forms
 from .models import Product, Category, SubCategory
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Product, Category, SubCategory, Order, CartItem
-
-
+from .models import Order, CartItem
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -22,11 +18,17 @@ class CustomAuthenticationForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'stock', 'category', 'subcategory', 'image']
+        fields = [
+            'name',
+            'description',
+            'price',
+            'stock',
+            'category',
+            'subcategory',
+            'image']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -37,6 +39,7 @@ class ProductForm(forms.ModelForm):
             'image': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -44,6 +47,7 @@ class CategoryForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category name'})
         }
+
 
 class SubCategoryForm(forms.ModelForm):
     class Meta:
@@ -54,19 +58,30 @@ class SubCategoryForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter subcategory name'})
         }
 
+
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['status']
 
+
 class CartItemForm(forms.ModelForm):
     class Meta:
         model = CartItem
         fields = ['product', 'quantity']
-        
+
+
 class RegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter password'}))
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm password'}))
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter password'}))
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Confirm password'}))
 
     class Meta:
         model = User

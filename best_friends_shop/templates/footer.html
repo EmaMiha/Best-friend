@@ -1,12 +1,13 @@
-<footer class="footer fixed-bottom bg-dark text-white py-3">
-    <div class="container d-flex justify-content-between align-items-center">
+<footer class="footer bg-dark text-white py-3 mt-auto">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
         <p class="mb-0">© 2025 Best Friends Shop. All rights reserved.</p>
         <p class="mb-0">Site visits: {{ request.session.visits }}</p>
         <button id="openGameModal" class="btn btn-warning btn-sm">Play for a Discount</button>
     </div>
 </footer>
 
-<div id="gameModal" class="modal fade" tabindex="-1">
+<!-- Game Modal -->
+<div id="gameModal" class="modal fade" tabindex="-1" aria-labelledby="gameModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

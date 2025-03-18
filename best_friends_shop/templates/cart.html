@@ -35,8 +35,7 @@
                         </form>
                     </td>
                     <td>${{ item.product.price|floatformat:2 }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>${{ item.total_price|floatformat:2 }}</td>
+                    <td>${{ item.quantity|floatformat:2 }}</td>
                     <td>
                         <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">
                             <i class="fas fa-trash"></i> Remove
@@ -49,8 +48,8 @@
     </div>
 
     <div class="text-end">
-        <h3>Total Price: <strong>${{ total_price }}</strong></h3>
-        <a href="{% url 'checkout' %}" class="btn btn-success btn-lg mt-3">Order Now</a>
+        <h3>Total Price: <strong id="total_price">${{ total_price }}</strong></h3>
+        <button type="button" class="btn btn-success btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#checkoutModal">Order Now</button>
     </div>
 
     {% else %}
@@ -60,4 +59,62 @@
     </div>
     {% endif %}
 </div>
+
+
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checkoutModalLabel">Checkout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Total Price:</strong> $<span id="checkoutTotal">{{ total_price }}</span></p>
+
+                <div class="mb-3">
+                    <label for="discountCode" class="form-label">Enter Discount Code</label>
+                    <input type="text" id="discountCode" class="form-control" placeholder="Enter code">
+                </div>
+
+                <p><strong>Discounted Price:</strong> $<span id="discountedPrice">{{ total_price }}</span></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="applyDiscount" class="btn btn-warning">Apply Discount</button>
+                <a href="{% url 'checkout' %}" class="btn btn-success">Proceed to Payment</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let discountBtn = document.getElementById("applyDiscount");
+    let discountInput = document.getElementById("discountCode");
+    let checkoutTotal = document.getElementById("checkoutTotal");
+    let discountedPrice = document.getElementById("discountedPrice");
+
+    let validDiscountCodes = {
+        "SAVE10": 10,
+        "SAVE20": 20
+    };
+
+    discountBtn.addEventListener("click", function () {
+        let discountCode = discountInput.value.trim().toUpperCase();
+        let totalPrice = parseFloat(checkoutTotal.innerText);
+
+        if (validDiscountCodes[discountCode]) {
+            let discountPercent = validDiscountCodes[discountCode];
+            let discountAmount = (totalPrice * discountPercent) / 100;
+            let newTotal = totalPrice - discountAmount;
+
+            discountedPrice.innerText = newTotal.toFixed(2);
+        } else {
+            alert("Invalid discount code! Try again.");
+        }
+    });
+});
+</script>
 {% endblock %}
