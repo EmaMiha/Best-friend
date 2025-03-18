@@ -132,18 +132,17 @@ def add_to_cart(request, product_id):
         data = json.loads(request.body.decode("utf-8"))
         quantity = int(data.get("quantity", 1))
 
-        # Ispravan način dodavanja proizvoda u korpu
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, product=product)
 
         if created:
-            cart_item.quantity = quantity  # Ako je prvi put dodat, postavi unetu količinu
+            cart_item.quantity = quantity  
         else:
-            cart_item.quantity += quantity  # Ako već postoji, samo povećaj količinu
+            cart_item.quantity += quantity  
 
         cart_item.save()
 
-        # Ažuriranje bedža u navigaciji
+
         cart_count = CartItem.objects.filter(cart=cart).count()
 
         return JsonResponse(
