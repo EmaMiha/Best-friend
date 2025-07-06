@@ -1,10 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
-<<<<<<< HEAD
 from .forms import ProductForm, CategoryForm
-=======
-from .forms import CustomAuthenticationForm, ProductForm, CategoryForm
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 from .forms import SubCategoryForm, RegisterForm
 from .models import Product, Category, Cart, CartItem, Order, OrderItem
 from .models import SubCategory
@@ -20,15 +16,11 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-<<<<<<< HEAD
 from itertools import zip_longest
 from django.contrib.auth import logout
 
 
 
-=======
-from django.contrib.messages import get_messages
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
 
 def home(request):
@@ -37,10 +29,7 @@ def home(request):
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
     top_selling_products = get_top_selling_products()
-<<<<<<< HEAD
     top_products_grouped = group_products(top_selling_products, 3)
-=======
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
     visits = request.session.get('visits', 0)
     request.session['visits'] = visits + 1
@@ -73,7 +62,6 @@ def home(request):
         'subcategories': subcategories,
         'selected_categories': selected_categories,
         'selected_subcategories': selected_subcategories,
-<<<<<<< HEAD
         "top_selling_products": top_selling_products,
         "top_products_grouped": top_products_grouped,
     })
@@ -97,15 +85,6 @@ def group_products(products, n):
 
 
 def login_view(request):
-=======
-        "top_selling_products": top_selling_products
-    })
-
-
-def login_view(request):
-    storage = get_messages(request)
-    list(storage)
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
     if request.method == "POST":
         username = request.POST.get("username")
@@ -184,10 +163,6 @@ def add_to_cart(request, product_id):
 
         cart_item.save()
 
-<<<<<<< HEAD
-=======
-
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
         cart_count = CartItem.objects.filter(cart=cart).count()
 
         return JsonResponse(
@@ -240,28 +215,17 @@ def cart_view(request):
     return render(request, "cart.html", {
                   "cart_items": cart_items, "total_price": total_price})
 
-<<<<<<< HEAD
 @login_required
 def create_checkout_session(request):
     print(">>> METHOD:", request.method)
     print(">>> POST DATA:", request.POST)
     cart = Cart.objects.get(user=request.user)
     cart_items = cart.cartitem_set.all()
-=======
-
-@login_required
-def create_checkout_session(request):
-    cart = Cart.objects.get(user=request.user)
-    cart_items = cart.cartitem_set.all()
-    total_price = sum(item.product.price *
-                      item.quantity for item in cart_items)
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
     if not cart_items:
         messages.error(request, "Your cart is empty!")
         return redirect('home')
 
-<<<<<<< HEAD
     total_price = sum(item.product.price * item.quantity for item in cart_items)
 
     discount_code = request.POST.get("discount_code_hidden", "").strip().upper()
@@ -287,58 +251,27 @@ def create_checkout_session(request):
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=line_items,
-=======
-    session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[
-            {
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {'name': item.product.name},
-                    'unit_amount': int(item.product.price * 100),
-                },
-                'quantity': item.quantity,
-            }
-            for item in cart_items
-        ],
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
         mode='payment',
         success_url=request.build_absolute_uri('/success/'),
         cancel_url=request.build_absolute_uri('/cancel/'),
     )
-<<<<<<< HEAD
 
     order = Order.objects.create(
         user=request.user,
         total_price=final_price,
-=======
-    order = Order.objects.create(
-        user=request.user,
-        total_price=total_price,
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
         stripe_payment_id=session.id
     )
 
     for item in cart_items:
         OrderItem.objects.create(
-<<<<<<< HEAD
             order=order, product=item.product, quantity=item.quantity
         )
 
     cart_items.delete()
-=======
-            order=order, product=item.product, quantity=item.quantity)
-
-    cart.cartitem_set.all().delete()
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
     return redirect(session.url)
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 def success_view(request):
     messages.success(
         request, "Payment successful! Your order has been placed.")
@@ -412,52 +345,25 @@ def category_list(request):
     return render(request, 'categories.html', {'categories': categories})
 
 
-<<<<<<< HEAD
-=======
-def get_top_selling_products():
-    top_selling = (
-        Product.objects.annotate(total_sold=Sum("cartitem__quantity"))
-        .order_by("-total_sold")[:5]
-    )
-
-    if len(top_selling) < 3:
-        top_selling = Product.objects.order_by("?")[:3]
-
-    return top_selling
-
-
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 VALID_DISCOUNT_CODES = {"SAVE10": 10, "SAVE20": 20}
 
 
 def checkout(request):
-<<<<<<< HEAD
     print(">>> METHOD:", request.method)
     print(">>> POST DATA:", request.POST)
-=======
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
     try:
         cart = Cart.objects.get(user=request.user)
         cart_items = cart.cartitem_set.all()
 
         if not cart_items.exists():
-<<<<<<< HEAD
             messages.error(request, "Your cart is empty.")
             return redirect("home")
 
         total_price = sum(item.product.price * item.quantity for item in cart_items)
-=======
-            messages.error(request, "Your cart is empty")
-            return redirect("home")
-
-        total_price = sum(item.product.price *
-                          item.quantity for item in cart_items)
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
         discount_percentage = 0
         discount_amount = Decimal("0.00")
 
         if request.method == "POST":
-<<<<<<< HEAD
             print("POST data:", request.POST) 
             discount_code = request.POST.get("discount_code_hidden", "").strip().upper()
             print("Received discount code:", discount_code)
@@ -493,49 +399,11 @@ def checkout(request):
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
                 line_items=line_items,
-=======
-            discount_code = request.POST.get("discount_code", "").strip()
-            print(discount_code)
-
-            if discount_code in VALID_DISCOUNT_CODES:
-                discount_code = int(discount_code)
-                if discount_code in VALID_DISCOUNT_CODES:
-                    discount_percentage = VALID_DISCOUNT_CODES[discount_code]
-                    discount_amount = (
-                        total_price * Decimal(discount_percentage)) / 100
-                    messages.success(
-                        request, f"Discount applied:{discount_percentage}% off"
-                    )
-                    final_price = total_price - discount_amount
-            else:
-                final_price = total_price
-
-            if final_price < Decimal("0.01"):
-                final_price = Decimal("0.01")
-
-            final_price_cents = int(final_price * 100)
-            checkout_session = stripe.checkout.Session.create(
-                payment_method_types=["card"],
-                line_items=[
-                    {
-                        "price_data": {
-                            "currency": "usd",
-                            "product_data": {"name": "Best Friend Shop Order"},
-                            "unit_amount": final_price_cents,
-                        },
-                        "quantity": 1,
-                    }
-                ],
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
                 mode="payment",
                 success_url=request.build_absolute_uri("/payment-success/"),
                 cancel_url=request.build_absolute_uri("/cart/"),
             )
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
             order = Order.objects.create(
                 user=request.user,
                 total_price=final_price,
@@ -545,14 +413,10 @@ def checkout(request):
 
             for item in cart_items:
                 OrderItem.objects.create(
-<<<<<<< HEAD
                     order=order,
                     product=item.product,
                     quantity=item.quantity
                 )
-=======
-                    order=order, product=item.product, quantity=item.quantity)
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
             cart_items.delete()
 
@@ -561,16 +425,11 @@ def checkout(request):
     except Cart.DoesNotExist:
         messages.error(request, "Your cart is empty.")
         return redirect("home")
-<<<<<<< HEAD
 
     return render(
         request,
         "checkout.html",
         {
-=======
-    return render(
-        request, "checkout.html", {
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
             "total_price": total_price,
             "discount_percentage": discount_percentage,
             "discount_amount": discount_amount
@@ -706,7 +565,6 @@ def update_subcategory(request, subcategory_id):
             return redirect('manage_categories')
     else:
         form = SubCategoryForm(instance=subcategory)
-<<<<<<< HEAD
     return render(request, 'update_subcategory.html', {'form': form})
 
 
@@ -718,6 +576,3 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Successfully logged out!")
     return redirect("home")
-=======
-    return render(request, 'update_subcategory.html', {'form': form})
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9

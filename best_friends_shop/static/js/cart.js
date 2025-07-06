@@ -70,10 +70,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-<<<<<<< HEAD
-=======
-// ✅ Funkcija za prikaz Toast notifikacije
->>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 function showToast(message, type = "success") {
     const toastContainer = document.getElementById("toast-container");
     if (!toastContainer) {
