@@ -9,7 +9,11 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register, name='register'),
     path('cart/', views.cart_view, name='cart_view'),
+<<<<<<< HEAD
     path('logout/', views.logout_view, name='logout'),
+=======
+    path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
+>>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
     path('add-product/', views.add_product, name='add_product'),
     path(
         'add-to-cart/<int:product_id>/',
@@ -17,7 +21,11 @@ urlpatterns = [
         name='add_to_cart'),
     path('add-category/', views.add_category, name='add_category'),
     path('add-subcategory/', views.add_subcategory, name='add_subcategory'),
+<<<<<<< HEAD
     path('create-checkout-session/', views.create_checkout_session, name='create_checkout_session'),
+=======
+    path('checkout/', views.create_checkout_session, name='checkout'),
+>>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
     path('success/', views.success_view, name='success'),
     path('cancel/', views.cancel_view, name='cancel'),
     path('cart/update/<int:item_id>/', views.update_cart, name='update_cart'),
@@ -46,7 +54,10 @@ urlpatterns = [
          views.update_category, name='update_category'),
     path('update-subcategory/<int:subcategory_id>/',
          views.update_subcategory, name='update_subcategory'),
+<<<<<<< HEAD
     path('about/', views.about, name='about'),
+=======
+>>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
 
 
 ]

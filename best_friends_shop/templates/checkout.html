@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Checkout</h2>
+
+{% if messages %}
+<div class="alert alert-info text-center">
+  {% for message in messages %} {{ message }} {% endfor %}
+</div>
+{% endif %}
+<p id="originalPrice" data-total="{{ total_price }}">
+  Total Price: <strong>${{ total_price }}</strong>
+</p>
+
+{% if discount_percentage %}
+<p class="text-success text-center">
+  Discount Applied: {{ discount_percentage }}%<br />
+  Discount Amount: <strong>${{ discount_amount }}</strong>
+</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+
+  <label for="discount_code">Enter Discount Code:</label>
+  <input
+    type="text"
+    id="discount_code"
+    name="discount_code"
+    class="form-control"
+    placeholder="Enter your code"
+  />
+  <button type="button" class="btn btn-info mt-2" id="applyDiscount">
+    Apply Discount
+  </button>
+
+  <button type="submit" class="btn btn-success mt-3">Proceed to Payment</button>
+</form>
+
+<script src="{% static 'js/check.js' %}"></script>
+
+{% endblock %}

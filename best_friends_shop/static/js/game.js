@@ -20,8 +20,12 @@ document.addEventListener("DOMContentLoaded", function () {
             message.classList.add("text-danger");
         }
     });
+<<<<<<< HEAD
 });
 
 
 
 
+=======
+});
+>>>>>>> ffd282190605125713a0abd263964f8a0e8f48d9
