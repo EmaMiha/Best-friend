@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from .forms import ProductForm, CategoryForm
 from .forms import SubCategoryForm, RegisterForm
-from .models import Product, Category, Cart, CartItem, Order, OrderItem
+from .models import Product, Category, Cart, CartItem, Order, OrderItem, NewsletterSubscriber
 from .models import SubCategory
 from django.core.paginator import Paginator
 from decimal import Decimal
@@ -18,8 +18,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from itertools import zip_longest
 from django.contrib.auth import logout
-
-
+from .forms import NewsletterForm
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 
@@ -581,3 +581,18 @@ def logout_view(request):
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'my_orders.html', {'orders': orders})
+
+def newsletter_signup(request):
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "You've successfully subscribed to our newsletter!")
+        else:
+            messages.error(request, "This email is already subscribed.")
+    return redirect('home')  
+
+@staff_member_required
+def view_subscribers(request):
+    subscribers = NewsletterSubscriber.objects.all().order_by('-subscribed_at')
+    return render(request, 'newsletter_subscribers.html', {'subscribers': subscribers})

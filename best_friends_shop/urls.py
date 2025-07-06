@@ -48,6 +48,9 @@ urlpatterns = [
          views.update_subcategory, name='update_subcategory'),
     path('about/', views.about, name='about'),
     path('my-orders/', views.my_orders, name='my_orders'),
+    path('subscribe/', views.newsletter_signup, name='newsletter_signup'),
+    path('newsletter-subscribers/', views.view_subscribers, name='view_subscribers'),
+
 
 
 ]

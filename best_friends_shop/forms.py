@@ -3,6 +3,19 @@ from django import forms
 from .models import Product, Category, SubCategory
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Order, CartItem
+from .models import NewsletterSubscriber
+
+
+class NewsletterForm(forms.ModelForm):
+    class Meta:
+        model = NewsletterSubscriber
+        fields = ['email']
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'Enter your email',
+                'class': 'form-control'
+            })
+        }
 
 
 class CustomUserCreationForm(UserCreationForm):

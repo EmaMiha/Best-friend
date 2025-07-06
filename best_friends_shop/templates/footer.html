@@ -6,6 +6,21 @@
   >
     <p class="mb-0">© 2025 Best Friends Shop. All rights reserved.</p>
     <p class="mb-0">Site visits: {{ request.session.visits }}</p>
+    <form
+      action="{% url 'newsletter_signup' %}"
+      method="post"
+      class="d-flex gap-2 mt-3"
+    >
+      {% csrf_token %}
+      <input
+        type="email"
+        name="email"
+        placeholder="Subscribe to newsletter"
+        class="form-control"
+        required
+      />
+      <button type="submit" class="btn btn-outline-light">Subscribe</button>
+    </form>
     <div>
       <a href="{% url 'about' %}" class="btn btn-outline-light btn-sm me-2"
         >About Author</a
@@ -14,9 +29,13 @@
       <button id="openGameModal" class="btn btn-warning btn-sm">
         Play for a Discount
       </button>
-       <a href="https://www.facebook.com" target="_blank" class="btn btn-outline-light btn-sm">
-             Facebook
-            </a>
+      <a
+        href="https://www.facebook.com"
+        target="_blank"
+        class="btn btn-outline-light btn-sm"
+      >
+        Facebook
+      </a>
     </div>
   </div>
 </footer>
