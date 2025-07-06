@@ -1,0 +1,169 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Your Cart</h2>
+
+  {% if cart_items %}
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Product</th>
+          <th>Image</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td>
+            <img
+              src="{{ item.product.image.url }}"
+              alt="{{ item.product.name }}"
+              class="cart-img"
+            />
+          </td>
+          <td>
+            <form method="post" action="{% url 'update_cart' item.id %}">
+              {% csrf_token %}
+              <div class="input-group">
+                <button
+                  type="submit"
+                  name="action"
+                  value="decrease"
+                  class="btn btn-outline-secondary"
+                >
+                  −
+                </button>
+                <input
+                  type="text"
+                  name="quantity"
+                  value="{{ item.quantity }}"
+                  class="form-control text-center"
+                  style="max-width: 50px"
+                  readonly
+                />
+                <button
+                  type="submit"
+                  name="action"
+                  value="increase"
+                  class="btn btn-outline-secondary"
+                >
+                  +
+                </button>
+              </div>
+            </form>
+          </td>
+          <td>${{ item.product.price|floatformat:2 }}</td>
+          <td> ${% widthratio item.quantity 1 item.product.price %}</td>
+          <td>
+            <a
+              href="{% url 'remove_from_cart' item.id %}"
+              class="btn btn-danger btn-sm"
+            >
+              <i class="fas fa-trash"></i> Remove
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-end">
+    <h3>Total Price: <strong id="total_price">${{ total_price }}</strong></h3>
+    <button
+      type="button"
+      class="btn btn-success btn-lg mt-3"
+      data-bs-toggle="modal"
+      data-bs-target="#checkoutModal"
+    >
+      Order Now
+    </button>
+  </div>
+
+  {% else %}
+  <div class="alert alert-warning text-center">
+    <p>Your cart is empty.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+  </div>
+  {% endif %}
+</div>
+
+<div
+  class="modal fade"
+  id="checkoutModal"
+  tabindex="-1"
+  aria-labelledby="checkoutModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'create_checkout_session' %}">
+        {% csrf_token %}
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="checkoutModalLabel">Checkout</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <p>
+            <strong>Total Price:</strong> $<span id="checkoutTotal"
+              >{{ total_price }}</span
+            >
+          </p>
+
+          <div class="mb-3">
+            <label for="discountCode" class="form-label"
+              >Enter Discount Code</label
+            >
+            <input
+              type="text"
+              id="discountCode"
+              class="form-control"
+              placeholder="Enter code"
+            />
+            <input
+              type="hidden"
+              name="discount_code_hidden"
+              id="discount_code_hidden"
+            />
+          </div>
+
+          <p>
+            <strong>Discounted Price:</strong> $<span id="discountedPrice"
+              >{{ total_price }}</span
+            >
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="button" id="applyDiscount" class="btn btn-warning">
+            Apply Discount
+          </button>
+          <button type="submit" class="btn btn-success">
+            Proceed to Payment
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/check.js' %}"></script>
+{% endblock %}

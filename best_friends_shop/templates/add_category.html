@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Manage Categories & Subcategories</h2>
+
+  <div class="row justify-content-center">
+    <!-- Add Category Section -->
+    <div class="col-md-5">
+      <div class="card p-4 shadow-sm">
+        <h4 class="text-center mb-3">Add a New Category</h4>
+
+        {% if messages %}
+        <div class="alert alert-success text-center" role="alert">
+          {% for message in messages %} {{ message }} {% endfor %}
+        </div>
+        <script>
+          setTimeout(() => {
+            window.location.href = "{% url 'manage_categories' %}";
+          }, 3000);
+        </script>
+        {% endif %}
+
+        <form method="post" action="{% url 'add_category' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Category Name</label>
+            {{ category_form.name }}
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Add Category</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Subcategory Section -->
+    <div class="col-md-5">
+      <div class="card p-4 shadow-sm">
+        <h4 class="text-center mb-3">Add a New Subcategory</h4>
+
+        <form method="post" action="{% url 'add_subcategory' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Select Category</label>
+            {{ subcategory_form.category }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Subcategory Name</label>
+            {{ subcategory_form.name }}
+          </div>
+          <button type="submit" class="btn btn-success w-100">Add Subcategory</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- List of Categories and Subcategories with Edit & Delete Buttons -->
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <h4 class="text-center mb-3">Existing Categories</h4>
+      <ul class="list-group">
+        {% for category in categories %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ category.name }}
+          <div>
+            <a href="{% url 'update_category' category.id %}" class="btn btn-warning btn-sm">Edit</a>
+            <form method="post" action="{% url 'delete_category' category.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                Delete
+              </button>
+            </form>
+          </div>
+        </li>
+        {% empty %}
+        <p class="text-center">No categories available.</p>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col-md-6">
+      <h4 class="text-center mb-3">Existing Subcategories</h4>
+      <ul class="list-group">
+        {% for subcategory in subcategories %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ subcategory.name }} ({{ subcategory.category.name }})
+          <div>
+            <a href="{% url 'update_subcategory' subcategory.id %}" class="btn btn-warning btn-sm">Edit</a>
+            <form method="post" action="{% url 'delete_subcategory' subcategory.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                Delete
+              </button>
+            </form>
+          </div>
+        </li>
+        {% empty %}
+        <p class="text-center">No subcategories available.</p>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

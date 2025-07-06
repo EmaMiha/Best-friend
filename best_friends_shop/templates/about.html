@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<header>
+    <div class="header-content">
+        <h1>About the Author</h1>
+    </div>
+</header>
+
+<main class="about-container">
+    <section class="author-info">
+        <img src="{% static 'images/author/milena.jpg' %}" alt="Milena Ceglia Mihajilovic" class="author-img">
+        <div class="author-text">
+            <h2>Milena Ceglia Mihajilovic</h2>
+            <p>This blog is for anyone who loves to cook and for everyone who would like to learn how to cook.
+                Food was my gateway to Italian culture, Italian language, and local people. Through every bite,
+                I learnt a bit more about local life and Italian history. I found a passion for all things 
+                edible and drinkable, and translated that passion into a gig as a food blogger.</p>
+
+            <p>No matter where I travel or what I eat, I am searching to find the hidden stories of the everyday food 
+                we eat every day. Welcome aboard!</p>
+        </div>
+    </section>
+    <a href="{% url 'home' %}" class="btn-back">Back to Home</a>
+</main>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    header {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .about-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .author-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .author-img {
+        width: 250px;
+        height: auto;
+        border-radius: 50%;
+        border: 5px solid #ddd;
+        margin-bottom: 20px;
+    }
+
+    .author-text {
+        max-width: 600px;
+    }
+
+    .author-text h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .author-text p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #666;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        background-color: #0056b3;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    .btn-back:hover {
+        background-color: #003d82;
+    }
+</style>
+{% endblock %}
