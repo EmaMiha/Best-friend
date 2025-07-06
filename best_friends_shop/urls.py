@@ -47,6 +47,7 @@ urlpatterns = [
     path('update-subcategory/<int:subcategory_id>/',
          views.update_subcategory, name='update_subcategory'),
     path('about/', views.about, name='about'),
+    path('my-orders/', views.my_orders, name='my_orders'),
 
 
 ]
