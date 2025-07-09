@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Page Not Found | Best Friend Shop</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <style>
+      body {
+        background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container-404 {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .container-404 img {
+        width: 200px;
+        margin-bottom: 20px;
+      }
+
+      .container-404 h1 {
+        font-size: 48px;
+        color: #ff6b6b;
+        margin-bottom: 10px;
+      }
+
+      .container-404 p {
+        font-size: 18px;
+        color: #555;
+        margin-bottom: 30px;
+      }
+
+      .container-404 a {
+        display: inline-block;
+        background-color: #00b894;
+        color: white;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+
+      .container-404 a:hover {
+        background-color: #019875;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-404">
+<img src="{% static 'images/nopage.png' %}" alt="404 error image" class="img-fluid">
+      <h1>404 - Not Found</h1>
+      <p>Uh-oh! Looks like this page ran away chasing a squirrel...</p>
+      <a href="{% url 'home' %}">Return to Home</a>
+    </div>
+  </body>
+</html>

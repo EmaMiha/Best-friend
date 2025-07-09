@@ -2,7 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from .forms import ProductForm, CategoryForm
 from .forms import SubCategoryForm, RegisterForm
-from .models import Product, Category, Cart, CartItem, Order, OrderItem, NewsletterSubscriber
+from .models import (
+    Product,
+    Category,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    NewsletterSubscriber
+)
 from .models import SubCategory
 from django.core.paginator import Paginator
 from decimal import Decimal
@@ -22,9 +30,7 @@ from .forms import NewsletterForm
 from django.contrib.admin.views.decorators import staff_member_required
 
 
-
 def home(request):
-
     products = Product.objects.all()
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
@@ -157,9 +163,9 @@ def add_to_cart(request, product_id):
             cart=cart, product=product)
 
         if created:
-            cart_item.quantity = quantity  
+            cart_item.quantity = quantity
         else:
-            cart_item.quantity += quantity  
+            cart_item.quantity += quantity
 
         cart_item.save()
 
@@ -215,20 +221,27 @@ def cart_view(request):
     return render(request, "cart.html", {
                   "cart_items": cart_items, "total_price": total_price})
 
+
 @login_required
 def create_checkout_session(request):
     print(">>> METHOD:", request.method)
     print(">>> POST DATA:", request.POST)
+
     cart = Cart.objects.get(user=request.user)
     cart_items = cart.cartitem_set.all()
 
     if not cart_items:
         messages.error(request, "Your cart is empty!")
-        return redirect('home')
+        return redirect("home")
 
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    total_price = sum(
+        item.product.price * item.quantity for item in cart_items
+    )
 
-    discount_code = request.POST.get("discount_code_hidden", "").strip().upper()
+    discount_code = request.POST.get(
+        "discount_code_hidden", ""
+    ).strip().upper()
+
     discount_percentage = VALID_DISCOUNT_CODES.get(discount_code, 0)
     discount_amount = (Decimal(discount_percentage) / 100) * total_price
     final_price = total_price - discount_amount
@@ -237,15 +250,23 @@ def create_checkout_session(request):
     for item in cart_items:
         product_price = item.product.price
         if discount_percentage:
-            product_price = product_price * (Decimal("100") - Decimal(discount_percentage)) / 100
+            product_price = (
+                product_price * (
+                    Decimal("100") - Decimal(discount_percentage)
+                ) / 100
+            )
 
         line_items.append({
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {'name': item.product.name},
-                'unit_amount': int((product_price * 100).quantize(Decimal('1'))),
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": item.product.name
+                },
+                "unit_amount": int((
+                    product_price * 100
+                ).quantize(Decimal("1"))),
             },
-            'quantity': item.quantity,
+            "quantity": item.quantity,
         })
 
     session = stripe.checkout.Session.create(
@@ -359,18 +380,28 @@ def checkout(request):
             messages.error(request, "Your cart is empty.")
             return redirect("home")
 
-        total_price = sum(item.product.price * item.quantity for item in cart_items)
+        total_price = sum(
+            item.product.price * item.quantity for item in cart_items
+        )
         discount_percentage = 0
         discount_amount = Decimal("0.00")
 
         if request.method == "POST":
-            print("POST data:", request.POST) 
-            discount_code = request.POST.get("discount_code_hidden", "").strip().upper()
+            print("POST data:", request.POST)
+            discount_code = request.POST.get(
+                "discount_code_hidden", ""
+            ).strip().upper()
             print("Received discount code:", discount_code)
+
             if discount_code in VALID_DISCOUNT_CODES:
                 discount_percentage = VALID_DISCOUNT_CODES[discount_code]
-                discount_amount = (total_price * Decimal(discount_percentage)) / 100
-                messages.success(request, f"Discount applied: {discount_percentage}% off")
+                discount_amount = (
+                    total_price * Decimal(discount_percentage)
+                ) / 100
+                messages.success(
+                    request,
+                    f"Discount applied: {discount_percentage}% off"
+                )
             else:
                 messages.error(request, "Invalid discount code.")
 
@@ -378,23 +409,29 @@ def checkout(request):
             if final_price < Decimal("0.01"):
                 final_price = Decimal("0.01")
 
-
             line_items = []
             for item in cart_items:
                 original_price = Decimal(item.product.price)
                 discounted_price = original_price
-                if discount_percentage>0:
-                    discounted_price = original_price * (Decimal("100") - Decimal(discount_percentage)) / 100
+                if discount_percentage > 0:
+                    discounted_price = (
+                        original_price * (
+                            Decimal("100") - Decimal(discount_percentage)
+                        ) / 100
+                    )
 
                 line_items.append({
                     "price_data": {
                         "currency": "usd",
-                        "product_data": {"name": item.product.name},
-                        "unit_amount": int((discounted_price * 100).quantize(Decimal('1'))),
+                        "product_data": {
+                            "name": item.product.name
+                        },
+                        "unit_amount": int((
+                            discounted_price * 100
+                        ).quantize(Decimal('1'))),
                     },
                     "quantity": item.quantity
                 })
-
 
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
@@ -577,22 +614,37 @@ def logout_view(request):
     messages.success(request, "Successfully logged out!")
     return redirect("home")
 
+
 @login_required
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'my_orders.html', {'orders': orders})
+
 
 def newsletter_signup(request):
     if request.method == 'POST':
         form = NewsletterForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "You've successfully subscribed to our newsletter!")
+            messages.success(
+                request,
+                "You've successfully subscribed to our newsletter!"
+            )
         else:
-            messages.error(request, "This email is already subscribed.")
-    return redirect('home')  
+            messages.error(
+                request,
+                "This email is already subscribed."
+            )
+    return redirect('home')
+
 
 @staff_member_required
 def view_subscribers(request):
-    subscribers = NewsletterSubscriber.objects.all().order_by('-subscribed_at')
-    return render(request, 'newsletter_subscribers.html', {'subscribers': subscribers})
+    subscribers = NewsletterSubscriber.objects.all().order_by(
+        '-subscribed_at'
+    )
+    return render(
+        request,
+        'newsletter_subscribers.html',
+        {'subscribers': subscribers},
+    )
