@@ -1,25 +1,77 @@
+{% load static %}
+
 <footer class="footer bg-dark text-white py-3 mt-auto">
-    <div class="container d-flex flex-wrap justify-content-between align-items-center">
-        <p class="mb-0">© 2025 Best Friends Shop. All rights reserved.</p>
-        <p class="mb-0">Site visits: {{ request.session.visits }}</p>
-        <button id="openGameModal" class="btn btn-warning btn-sm">Play for a Discount</button>
+  <div
+    class="container d-flex flex-wrap justify-content-between align-items-center"
+  >
+    <p class="mb-0">© 2025 Best Friends Shop. All rights reserved.</p>
+    <p class="mb-0">Site visits: {{ request.session.visits }}</p>
+    <form
+      action="{% url 'newsletter_signup' %}"
+      method="post"
+      class="d-flex gap-2 mt-3"
+    >
+      {% csrf_token %}
+      <input
+        type="email"
+        name="email"
+        placeholder="Subscribe to newsletter"
+        class="form-control"
+        required
+      />
+      <button type="submit" class="btn btn-outline-light">Subscribe</button>
+    </form>
+    <div>
+      <a href="{% url 'about' %}" class="btn btn-outline-light btn-sm me-2"
+        >About Author</a
+      >
+
+      <button id="openGameModal" class="btn btn-warning btn-sm">
+        Play for a Discount
+      </button>
+      <a
+        href="https://www.facebook.com"
+        target="_blank"
+        class="btn btn-outline-light btn-sm"
+      >
+        Facebook
+      </a>
     </div>
+  </div>
 </footer>
 
 <!-- Game Modal -->
-<div id="gameModal" class="modal fade" tabindex="-1" aria-labelledby="gameModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Try Your Luck!</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p>Guess a number between 1 and 5. If you win, you get a discount code!</p>
-                <input type="number" id="guessNumber" class="form-control text-center w-50 mx-auto" min="1" max="5">
-                <button id="checkGuess" class="btn btn-success mt-3">Submit</button>
-                <p id="gameMessage" class="mt-2 fw-bold"></p>
-            </div>
-        </div>
+<div
+  id="gameModal"
+  class="modal fade"
+  tabindex="-1"
+  aria-labelledby="gameModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Try Your Luck!</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>
+          Guess a number between 1 and 5. If you win, you get a discount code!
+        </p>
+        <input
+          type="number"
+          id="guessNumber"
+          class="form-control text-center w-50 mx-auto"
+          min="1"
+          max="5"
+        />
+        <button id="checkGuess" class="btn btn-success mt-3">Submit</button>
+        <p id="gameMessage" class="mt-2 fw-bold"></p>
+      </div>
     </div>
+  </div>
 </div>

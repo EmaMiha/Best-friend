@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".add-to-cart").forEach(button => {
         button.addEventListener("click", function (event) {
-            event.preventDefault(); // Sprečava standardni submit
+            event.preventDefault(); 
 
             const productId = this.getAttribute("data-product-id");
             const quantityInput = document.getElementById(`quantity-${productId}`);
@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Onemogućavanje dugmeta dok traje zahtev (sprečava dupli klik)
             this.disabled = true;
 
             fetch(`/add-to-cart/${productId}/`, {
@@ -34,13 +33,12 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error("Error:", error))
             .finally(() => {
-                this.disabled = false; // Ponovno omogućavanje dugmeta nakon završetka zahteva
+                this.disabled = false; 
             });
         });
     });
 });
 
-// ✅ Funkcija za CSRF token
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -56,7 +54,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// ✅ Funkcija za prikaz Toast notifikacije
 function showToast(message, type = "success") {
     const toastContainer = document.getElementById("toast-container");
     if (!toastContainer) {

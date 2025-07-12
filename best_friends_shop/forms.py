@@ -1,8 +1,32 @@
-from django.contrib.auth.models import User
 from django import forms
-from .models import Product, Category, SubCategory
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Order, CartItem
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    AuthenticationForm
+)
+from django.contrib.auth.models import User
+
+from .models import (
+    Product,
+    Category,
+    SubCategory,
+    Order,
+    CartItem,
+    NewsletterSubscriber
+)
+
+
+class NewsletterForm(forms.ModelForm):
+    class Meta:
+        model = NewsletterSubscriber
+        fields = ['email']
+        widgets = {
+            'email': forms.EmailInput(
+                attrs={
+                    'placeholder': 'Enter your email',
+                    'class': 'form-control'
+                }
+            )
+        }
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -28,10 +52,13 @@ class ProductForm(forms.ModelForm):
             'stock',
             'category',
             'subcategory',
-            'image']
+            'image'
+        ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'description': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 3}
+            ),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-select'}),
@@ -45,7 +72,12 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ['name']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category name'})
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Enter category name'
+                }
+            )
         }
 
 
@@ -55,7 +87,12 @@ class SubCategoryForm(forms.ModelForm):
         fields = ['category', 'name']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter subcategory name'})
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Enter subcategory name'
+                }
+            )
         }
 
 
@@ -76,12 +113,18 @@ class RegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter password'}))
+                'placeholder': 'Enter password'
+            }
+        )
+    )
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Confirm password'}))
+                'placeholder': 'Confirm password'
+            }
+        )
+    )
 
     class Meta:
         model = User

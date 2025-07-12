@@ -1,8 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
-from .forms import CustomAuthenticationForm, ProductForm, CategoryForm
+from .forms import ProductForm, CategoryForm
 from .forms import SubCategoryForm, RegisterForm
-from .models import Product, Category, Cart, CartItem, Order, OrderItem
+from .models import (
+    Product,
+    Category,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    NewsletterSubscriber
+)
 from .models import SubCategory
 from django.core.paginator import Paginator
 from decimal import Decimal
@@ -16,15 +24,18 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.contrib.messages import get_messages
+from itertools import zip_longest
+from django.contrib.auth import logout
+from .forms import NewsletterForm
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def home(request):
-
     products = Product.objects.all()
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
     top_selling_products = get_top_selling_products()
+    top_products_grouped = group_products(top_selling_products, 3)
 
     visits = request.session.get('visits', 0)
     request.session['visits'] = visits + 1
@@ -57,13 +68,29 @@ def home(request):
         'subcategories': subcategories,
         'selected_categories': selected_categories,
         'selected_subcategories': selected_subcategories,
-        "top_selling_products": top_selling_products
+        "top_selling_products": top_selling_products,
+        "top_products_grouped": top_products_grouped,
     })
 
 
+def get_top_selling_products():
+    top_selling = (
+        Product.objects.annotate(total_sold=Sum("cartitem__quantity"))
+        .order_by("-total_sold")[:6]
+    )
+
+    if len(top_selling) < 3:
+        top_selling = Product.objects.order_by("?")[:3]
+
+    return top_selling
+
+
+def group_products(products, n):
+    args = [iter(products)] * n
+    return list(zip_longest(*args))
+
+
 def login_view(request):
-    storage = get_messages(request)
-    list(storage)
 
     if request.method == "POST":
         username = request.POST.get("username")
@@ -136,12 +163,11 @@ def add_to_cart(request, product_id):
             cart=cart, product=product)
 
         if created:
-            cart_item.quantity = quantity  
+            cart_item.quantity = quantity
         else:
-            cart_item.quantity += quantity  
+            cart_item.quantity += quantity
 
         cart_item.save()
-
 
         cart_count = CartItem.objects.filter(cart=cart).count()
 
@@ -198,43 +224,71 @@ def cart_view(request):
 
 @login_required
 def create_checkout_session(request):
+    print(">>> METHOD:", request.method)
+    print(">>> POST DATA:", request.POST)
+
     cart = Cart.objects.get(user=request.user)
     cart_items = cart.cartitem_set.all()
-    total_price = sum(item.product.price *
-                      item.quantity for item in cart_items)
 
     if not cart_items:
         messages.error(request, "Your cart is empty!")
-        return redirect('home')
+        return redirect("home")
+
+    total_price = sum(
+        item.product.price * item.quantity for item in cart_items
+    )
+
+    discount_code = request.POST.get(
+        "discount_code_hidden", ""
+    ).strip().upper()
+
+    discount_percentage = VALID_DISCOUNT_CODES.get(discount_code, 0)
+    discount_amount = (Decimal(discount_percentage) / 100) * total_price
+    final_price = total_price - discount_amount
+
+    line_items = []
+    for item in cart_items:
+        product_price = item.product.price
+        if discount_percentage:
+            product_price = (
+                product_price * (
+                    Decimal("100") - Decimal(discount_percentage)
+                ) / 100
+            )
+
+        line_items.append({
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": item.product.name
+                },
+                "unit_amount": int((
+                    product_price * 100
+                ).quantize(Decimal("1"))),
+            },
+            "quantity": item.quantity,
+        })
 
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
-        line_items=[
-            {
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {'name': item.product.name},
-                    'unit_amount': int(item.product.price * 100),
-                },
-                'quantity': item.quantity,
-            }
-            for item in cart_items
-        ],
+        line_items=line_items,
         mode='payment',
         success_url=request.build_absolute_uri('/success/'),
         cancel_url=request.build_absolute_uri('/cancel/'),
     )
+
     order = Order.objects.create(
         user=request.user,
-        total_price=total_price,
+        total_price=final_price,
         stripe_payment_id=session.id
     )
 
     for item in cart_items:
         OrderItem.objects.create(
-            order=order, product=item.product, quantity=item.quantity)
+            order=order, product=item.product, quantity=item.quantity
+        )
 
-    cart.cartitem_set.all().delete()
+    cart_items.delete()
 
     return redirect(session.url)
 
@@ -312,68 +366,76 @@ def category_list(request):
     return render(request, 'categories.html', {'categories': categories})
 
 
-def get_top_selling_products():
-    top_selling = (
-        Product.objects.annotate(total_sold=Sum("cartitem__quantity"))
-        .order_by("-total_sold")[:5]
-    )
-
-    if len(top_selling) < 3:
-        top_selling = Product.objects.order_by("?")[:3]
-
-    return top_selling
-
-
 VALID_DISCOUNT_CODES = {"SAVE10": 10, "SAVE20": 20}
 
 
 def checkout(request):
+    print(">>> METHOD:", request.method)
+    print(">>> POST DATA:", request.POST)
     try:
         cart = Cart.objects.get(user=request.user)
         cart_items = cart.cartitem_set.all()
 
         if not cart_items.exists():
-            messages.error(request, "Your cart is empty")
+            messages.error(request, "Your cart is empty.")
             return redirect("home")
 
-        total_price = sum(item.product.price *
-                          item.quantity for item in cart_items)
+        total_price = sum(
+            item.product.price * item.quantity for item in cart_items
+        )
         discount_percentage = 0
         discount_amount = Decimal("0.00")
 
         if request.method == "POST":
-            discount_code = request.POST.get("discount_code", "").strip()
-            print(discount_code)
+            print("POST data:", request.POST)
+            discount_code = request.POST.get(
+                "discount_code_hidden", ""
+            ).strip().upper()
+            print("Received discount code:", discount_code)
 
             if discount_code in VALID_DISCOUNT_CODES:
-                discount_code = int(discount_code)
-                if discount_code in VALID_DISCOUNT_CODES:
-                    discount_percentage = VALID_DISCOUNT_CODES[discount_code]
-                    discount_amount = (
-                        total_price * Decimal(discount_percentage)) / 100
-                    messages.success(
-                        request, f"Discount applied:{discount_percentage}% off"
-                    )
-                    final_price = total_price - discount_amount
+                discount_percentage = VALID_DISCOUNT_CODES[discount_code]
+                discount_amount = (
+                    total_price * Decimal(discount_percentage)
+                ) / 100
+                messages.success(
+                    request,
+                    f"Discount applied: {discount_percentage}% off"
+                )
             else:
-                final_price = total_price
+                messages.error(request, "Invalid discount code.")
 
+            final_price = total_price - discount_amount
             if final_price < Decimal("0.01"):
                 final_price = Decimal("0.01")
 
-            final_price_cents = int(final_price * 100)
+            line_items = []
+            for item in cart_items:
+                original_price = Decimal(item.product.price)
+                discounted_price = original_price
+                if discount_percentage > 0:
+                    discounted_price = (
+                        original_price * (
+                            Decimal("100") - Decimal(discount_percentage)
+                        ) / 100
+                    )
+
+                line_items.append({
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {
+                            "name": item.product.name
+                        },
+                        "unit_amount": int((
+                            discounted_price * 100
+                        ).quantize(Decimal('1'))),
+                    },
+                    "quantity": item.quantity
+                })
+
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
-                line_items=[
-                    {
-                        "price_data": {
-                            "currency": "usd",
-                            "product_data": {"name": "Best Friend Shop Order"},
-                            "unit_amount": final_price_cents,
-                        },
-                        "quantity": 1,
-                    }
-                ],
+                line_items=line_items,
                 mode="payment",
                 success_url=request.build_absolute_uri("/payment-success/"),
                 cancel_url=request.build_absolute_uri("/cart/"),
@@ -388,7 +450,10 @@ def checkout(request):
 
             for item in cart_items:
                 OrderItem.objects.create(
-                    order=order, product=item.product, quantity=item.quantity)
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity
+                )
 
             cart_items.delete()
 
@@ -397,8 +462,11 @@ def checkout(request):
     except Cart.DoesNotExist:
         messages.error(request, "Your cart is empty.")
         return redirect("home")
+
     return render(
-        request, "checkout.html", {
+        request,
+        "checkout.html",
+        {
             "total_price": total_price,
             "discount_percentage": discount_percentage,
             "discount_amount": discount_amount
@@ -535,3 +603,48 @@ def update_subcategory(request, subcategory_id):
     else:
         form = SubCategoryForm(instance=subcategory)
     return render(request, 'update_subcategory.html', {'form': form})
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Successfully logged out!")
+    return redirect("home")
+
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_orders.html', {'orders': orders})
+
+
+def newsletter_signup(request):
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                "You've successfully subscribed to our newsletter!"
+            )
+        else:
+            messages.error(
+                request,
+                "This email is already subscribed."
+            )
+    return redirect('home')
+
+
+@staff_member_required
+def view_subscribers(request):
+    subscribers = NewsletterSubscriber.objects.all().order_by(
+        '-subscribed_at'
+    )
+    return render(
+        request,
+        'newsletter_subscribers.html',
+        {'subscribers': subscribers},
+    )
