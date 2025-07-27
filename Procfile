@@ -1,0 +1,1 @@
+web: gunicorn best-friend-app.wsgi
