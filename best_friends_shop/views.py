@@ -332,14 +332,19 @@ def add_category(request):
         if category_form.is_valid():
             category_form.save()
             messages.success(request, "Category added successfully!")
-            return redirect('add_category')
+            return redirect('manage_categories')
     else:
         category_form = CategoryForm()
 
     subcategory_form = SubCategoryForm()
+    categories = Category.objects.all()
+    subcategories = SubCategory.objects.all()
+
     return render(request, 'add_category.html', {
         'category_form': category_form,
-        'subcategory_form': subcategory_form
+        'subcategory_form': subcategory_form,
+        'categories': categories,
+        'subcategories': subcategories,
     })
 
 
@@ -489,7 +494,7 @@ def get_subcategories(request):
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
-
+    print("DASDsadsa")
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
@@ -648,3 +653,32 @@ def view_subscribers(request):
         'newsletter_subscribers.html',
         {'subscribers': subscribers},
     )
+
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'product_detail.html', {'product': product})
+
+
+@login_required
+def add_to_cart_form(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+
+        quantity = int(request.POST.get('quantity', 1))
+
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, product=product
+        )
+        if created:
+            cart_item.quantity = quantity
+        else:
+            cart_item.quantity += quantity
+
+        cart_item.save()
+
+        messages.success(request, f"{product.name} added to cart.")
+        return redirect('cart_view')
+
+    return redirect('home')

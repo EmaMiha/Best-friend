@@ -22,20 +22,16 @@
       <button type="submit" class="btn btn-outline-light">Subscribe</button>
     </form>
     <div>
-      <a href="{% url 'about' %}" class="btn btn-outline-light btn-sm me-2"
-        >About Author</a
-      >
-
       <button id="openGameModal" class="btn btn-warning btn-sm">
         Play for a Discount
       </button>
-      <a
-        href="https://www.facebook.com"
+      <!-- <a
+        href="https://business.facebook.com/latest/settings/business_info?business_id=1475194993466692"
         target="_blank"
         class="btn btn-outline-light btn-sm"
       >
         Facebook
-      </a>
+      </a> -->
     </div>
   </div>
 </footer>
@@ -75,3 +71,7 @@
     </div>
   </div>
 </div>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" 
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0" nonce="ABC123">
+</script>

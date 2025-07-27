@@ -43,10 +43,9 @@ urlpatterns = [
     ),
     path('success/', views.success_view, name='success'),
     path('cancel/', views.cancel_view, name='cancel'),
-
-    # Product & Category management
     path('add-product/', views.add_product, name='add_product'),
     path('add-category/', views.add_category, name='add_category'),
+    path('manage-categories/', views.manage_categories, name='manage_categories'),
     path(
         'add-subcategory/',
         views.add_subcategory,
@@ -73,6 +72,11 @@ urlpatterns = [
         name='delete_category'
     ),
     path(
+        'add-to-cart-form/<int:product_id>/',
+        views.add_to_cart_form,
+        name='add_to_cart_form'
+    ),
+    path(
         'delete-subcategory/<int:subcategory_id>/',
         views.delete_subcategory,
         name='delete_subcategory'
@@ -87,7 +91,11 @@ urlpatterns = [
         views.update_subcategory,
         name='update_subcategory'
     ),
-
+    path(
+        'product/<int:product_id>/',
+        views.product_detail,
+        name='product_detail'
+    ),
     # Others
     path(
         'get-subcategories/',

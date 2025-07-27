@@ -10,7 +10,7 @@
       <div class="card p-4 shadow-sm">
         <h4 class="text-center mb-3">Add a New Category</h4>
 
-        {% if messages %}
+        <!-- {% if messages %}
         <div class="alert alert-success text-center" role="alert">
           {% for message in messages %} {{ message }} {% endfor %}
         </div>
@@ -18,8 +18,8 @@
           setTimeout(() => {
             window.location.href = "{% url 'manage_categories' %}";
           }, 3000);
-        </script>
-        {% endif %}
+        </script> 
+        {% endif %}-->
 
         <form method="post" action="{% url 'add_category' %}">
           {% csrf_token %}

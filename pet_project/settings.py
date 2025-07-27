@@ -17,7 +17,7 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '8000-emamiha-bestfriend-hqhy8kxxuml.ws.codeinstitute-ide.net',
@@ -137,4 +137,5 @@ MESSAGE_TAGS = {
 
 # Stripe configuration
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
