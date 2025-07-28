@@ -24,7 +24,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'ep-aged-sea-a2hu07ki.eu-central-1.aws.neon.tech',
-    'best-friend-app-9f8cd54d8ae6.herokuapp.com/'
+    'best-friend-app-9f8cd54d8ae6.herokuapp.com/',
+    '.herokuapp.com'
 ]
 
 # Application definition
@@ -141,3 +142,4 @@ MESSAGE_TAGS = {
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
