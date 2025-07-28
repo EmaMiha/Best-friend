@@ -1,1 +1,1 @@
-web: gunicorn best_friend_app.wsgi
+web: gunicorn pet_project.wsgi
