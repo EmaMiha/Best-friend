@@ -1,5 +1,6 @@
 from .models import Cart
 
+
 def cart_count(request):
     if request.user.is_authenticated:
         try:

@@ -3,6 +3,8 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 from django.views.generic import TemplateView
+from django.views.static import serve
+from django.urls import re_path
 
 from . import views
 from .sitemaps import ProductSitemap, StaticViewSitemap
@@ -45,7 +47,11 @@ urlpatterns = [
     path('cancel/', views.cancel_view, name='cancel'),
     path('add-product/', views.add_product, name='add_product'),
     path('add-category/', views.add_category, name='add_category'),
-    path('manage-categories/', views.manage_categories, name='manage_categories'),
+    path(
+        'manage-categories/',
+        views.manage_categories,
+        name='manage_categories'
+    ),
     path(
         'add-subcategory/',
         views.add_subcategory,
@@ -130,8 +136,15 @@ urlpatterns += [
     ),
 ]
 
+# if settings.DEBUG:
+#     urlpatterns += static(
+#         settings.MEDIA_URL,
+#         document_root=settings.MEDIA_ROOT
+#     )
+
 if settings.DEBUG:
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
-    )
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
