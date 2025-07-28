@@ -24,6 +24,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'ep-aged-sea-a2hu07ki.eu-central-1.aws.neon.tech',
+    'best-friend-app-9f8cd54d8ae6.herokuapp.com/'
 ]
 
 # Application definition
