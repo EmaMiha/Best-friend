@@ -46,10 +46,11 @@
                                     Please <a href="{% url 'login' %}">log in</a> to purchase this product.
                                 </div>
                             {% endif %}
-
+{% if user.is_authenticated and not user.is_staff %}
                             <a href="{% url 'cart_view' %}" class="btn btn-outline-secondary mt-3 w-100">
                                 <i class="fas fa-shopping-cart me-2"></i> View Cart
                             </a>
+                                {% endif %}
                         </div>
                     </div>
                 </div>
