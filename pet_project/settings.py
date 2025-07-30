@@ -17,7 +17,7 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '8000-emamiha-bestfriend-hqhy8kxxuml.ws.codeinstitute-ide.net',
