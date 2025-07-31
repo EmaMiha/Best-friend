@@ -43,4 +43,76 @@ The Best Friend Shop is designed with a specific group of users in mind. Our goa
 | #13  | As a Regular User, I want to be able to check the total cost of products in my bag.| 
 | #14 | As a Regular User, I want to be able to check the status of my order to track its progress.
 
- | 
+
+## Business Model
+
+This e-commerce platform operates on a Business to Consumer model, offering customers the ability to purchase high-quality dog products. 
+
+### Marketing Strategy
+
+### Objectives
+- Drive qualified traffic to Best Dog Shop through organic and paid channels
+- Increase brand visibility across digital platforms
+- Convert visitors into loyal customers
+- Build a trusted brand in the pet e-commerce space
+
+### Core Channels
+
+#### 1. Social Media Marketing
+- Platforms: Instagram, Facebook, TikTok, Pinterest
+- Content types: product showcases, user-generated content, dog care tips, giveaways
+- Influencer outreach: Partner with dog influencers and trainers
+
+#### 2. Email Marketing
+- Weekly newsletters 
+- Product recommendation sequences
+- Loyalty and referral program updates
+
+#### 3. Paid Ads
+- Google Shopping Ads
+- Meta Ads (Facebook/Instagram)
+
+#### 4. Content Marketing
+- Weekly blog posts on dog care, nutrition, training, and gear
+
+#### 5. Affiliate & Referral Programs
+- Launch affiliate network with pet bloggers and influencers
+- Referral rewards system for loyal customers
+
+### SEO Strategy
+
+Effective SEO is essential for driving organic traffic for the online store. 
+
+### Goals
+- Rank on the first page for key commercial and informational search terms
+- Grow organic traffic and reduce dependency on paid ads
+- Increase product discovery through optimized content and structure
+
+### Keyword Strategy
+- **Primary keywords:** dog toys, buy dog food online, dog collars, eco-friendly pet products
+- **Long-tail keywords:** best harness for small dogs, hypoallergenic dog treats, personalized dog bowl for bulldogs
+- Tools: Google Keyword Planner
+
+### On-Page SEO
+- Optimized product titles, descriptions, and meta tags
+- Clear URL structure
+- Image optimization 
+- Internal linking from blog posts to products
+
+### Technical SEO
+- Fast page load speeds
+- Mobile-friendly responsive design
+- SSL-secured domain (HTTPS)
+- Sitemap and robots.txt setup
+
+### Content SEO
+- Weekly SEO-optimized blog posts
+- Product use guides, breed-specific recommendations
+
+### Off-Page SEO
+- Social shares and engagement to drive authority
+- Guest posts and partnerships with pet influencers
+
+
+
+
