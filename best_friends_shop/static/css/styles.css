@@ -35,16 +35,7 @@ main {
 
 .product img {
     max-width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-.product-image {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 8px;
+    height: auto; 
 }
 
 .product h3 {
